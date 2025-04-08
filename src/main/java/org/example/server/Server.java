@@ -1,22 +1,23 @@
 package org.example.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
-public class Main {
+public class Server {
 
-    private static final String HOST = "localhost";
-    private static final int PORT = 12345;
-    private DataOutputStream outputStream; // для записи
-    DataInputStream inputStream; // для чтения
+    private static final int PORT = 12347;
 
     public static void main(String[] args) {
+        System.out.println("Server is running!");
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             while (true) {
-                serverSocket.accept();
+                Socket socket = serverSocket.accept();
+                ServerConnection serverConnection = new ServerConnection(socket);
+                serverConnection.start();
+                ClientList.addClient(serverConnection);
+                serverConnection.notifyClient();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
